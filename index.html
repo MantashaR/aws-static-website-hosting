@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS DevOps Intern Assignment</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #232f3e 0%, #ff9900 200%);
+            color: #232f3e;
+            padding: 20px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 520px;
+            width: 100%;
+            overflow: hidden;
+        }
+        .header {
+            background: #232f3e;
+            color: #fff;
+            padding: 32px;
+            text-align: center;
+        }
+        .header .badge {
+            display: inline-block;
+            background: #ff9900;
+            color: #232f3e;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 1px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+        .header h1 { font-size: 26px; margin-bottom: 6px; }
+        .header p { color: #ff9900; font-size: 14px; }
+        .body { padding: 32px; }
+        .row {
+            display: flex;
+            padding: 14px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .row:last-child { border-bottom: none; }
+        .label {
+            font-weight: 600;
+            color: #ff9900;
+            width: 130px;
+            flex-shrink: 0;
+        }
+        .value { color: #232f3e; }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+            color: #888;
+            background: #fafafa;
+        }
+        .footer strong { color: #232f3e; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="header">
+            <span class="badge">DEPLOYED ON AWS EC2</span>
+            <h1>Hosted with Nginx on Ubuntu</h1>
+            <p>AWS DevOps Engineer Intern Assignment</p>
+        </div>
+        <div class="body">
+            <div class="row">
+                <span class="label">Name</span>
+                <span class="value">Mantasha</span>
+            </div>
+            <div class="row">
+                <span class="label">College</span>
+                <span class="value">Galgotias University</span>
+            </div>
+            <div class="row">
+                <span class="label">Branch</span>
+                <span class="value">CSE</span>
+            </div>
+            <div class="row">
+                <span class="label">Email</span>
+                <span class="value">mantashafroze@gmail.com</span>
+            </div>
+            <div class="row">
+                <span class="label">Date</span>
+                <span class="value">10 July 2026</span>
+            </div>
+        </div>
+        <div class="footer">
+            Served by <strong>Nginx</strong> on an <strong>Ubuntu EC2 instance</strong> &middot; Amazon Web Services
+        </div>
+    </div>
+</body>
+</html>
