@@ -5,7 +5,7 @@
 **Branch:** CSE
 **Email:** mantashafroze@gmail.com
 **Date:** 11 July 2026
-**GitHub Repo:** [PASTE REPO LINK AFTER YOU CREATE IT]
+**GitHub Repo:** https://github.com/MantashaR/aws-devops-assignment
 **EC2 Public IP:** 3.109.60.228
 
 ---
