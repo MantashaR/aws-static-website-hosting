@@ -2,27 +2,27 @@
 
 Deploys a simple static website on an **Ubuntu EC2 instance** served by **Nginx**.
 
-**Live URL:** `http://<EC2_PUBLIC_IP>`  ← replace with your instance's public IP
+**Live URL:** `http://3.109.60.228`
 
 ---
 
 ## Architecture
 
 ```
-Browser ──HTTP:80──> [ AWS EC2 (Ubuntu 22.04) ]
+Browser ──HTTP:80──> [ AWS EC2 (Ubuntu 24.04) ]
                           │
                           └── Nginx ──serves──> /var/www/html/index.html
 SSH:22 ──> EC2 (admin access)
 ```
 
-**AWS services used:** EC2, Security Groups, Elastic IP (bonus).
+**AWS services used:** EC2, Security Groups, Key Pair. **Bonus:** Nginx restart shell script.
 
 ---
 
 ## 1. Launch the EC2 instance
 
 1. AWS Console → **EC2** → **Launch instance**.
-2. Name: `devops-assignment`. AMI: **Ubuntu Server 22.04 LTS**. Type: **t2.micro** (free tier).
+2. Name: `devops-assignment`. AMI: **Ubuntu Server 24.04 LTS**. Type: **t3.micro** (free tier).
 3. Create a key pair (`.pem`), download it.
 4. **Security Group** — allow inbound:
    | Type  | Port | Source     |
@@ -35,7 +35,7 @@ SSH:22 ──> EC2 (admin access)
 
 ```bash
 chmod 400 devops-assignment.pem
-ssh -i devops-assignment.pem ubuntu@<EC2_PUBLIC_IP>
+ssh -i devops-key.pem ubuntu@3.109.60.228
 ```
 
 ## 3. Install & configure Nginx (run on the EC2 instance)
@@ -56,14 +56,14 @@ ps aux --sort=-%mem | head                   # running processes
 
 ```bash
 # From your local machine, copy index.html to the instance:
-scp -i devops-assignment.pem index.html ubuntu@<EC2_PUBLIC_IP>:/tmp/
+scp -i devops-key.pem index.html ubuntu@3.109.60.228:/tmp/
 
 # On the instance, replace the default Nginx page:
 sudo cp /tmp/index.html /var/www/html/index.html
 sudo systemctl restart nginx
 ```
 
-Open `http://<EC2_PUBLIC_IP>` in a browser — the custom page should load.
+Open `http://3.109.60.228` in a browser — the custom page should load.
 
 ## 5. Bonus — restart script
 
