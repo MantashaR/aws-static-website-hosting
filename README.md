@@ -85,6 +85,4 @@ chmod +x restart-nginx.sh
 | `restart-nginx.sh` | Bonus: shell script to restart Nginx       |
 | `DOCUMENTATION.md` | Full report (convert to PDF for submission)|
 
-## Author
 
-**Mantasha** · Galgotias University · CSE · mantashafroze@gmail.com
