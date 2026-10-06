@@ -1,0 +1,790 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mantasha · DevOps &amp; Cloud</title>
+<meta name="description" content="Mantasha — aspiring DevOps & Cloud Engineer. AWS, Docker, Terraform, CI/CD, Prometheus/Grafana. Projects, skills and certifications.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f172a'/%3E%3Ctext x='50%25' y='56%25' text-anchor='middle' font-family='monospace' font-size='34' font-weight='700' fill='%2322d3ee'%3EM%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #0b1120;
+    --bg-2: #111a2e;
+    --card: #131d33;
+    --border: #22304d;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #22d3ee;
+    --accent-2: #a78bfa;
+    --ok: #34d399;
+    --warn: #fbbf24;
+    --term-bg: #060a14;
+    --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+    --mono: ui-monospace, "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  :root[data-theme="light"] {
+    --bg: #f8fafc;
+    --bg-2: #eef2f7;
+    --card: #ffffff;
+    --border: #dbe3ee;
+    --text: #0f172a;
+    --muted: #526079;
+    --accent: #0891b2;
+    --accent-2: #7c3aed;
+    --ok: #059669;
+    --warn: #b45309;
+    --term-bg: #0f172a;
+    --shadow: 0 10px 30px rgba(15, 23, 42, .08);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+  section { padding: 72px 0 24px; }
+  h2 {
+    font-size: 1.6rem;
+    margin: 0 0 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h2 .hash { color: var(--accent); font-family: var(--mono); }
+  .sub { color: var(--muted); margin: 0 0 28px; }
+
+  /* ---------- nav ---------- */
+  nav {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .logo { font-family: var(--mono); font-weight: 700; color: var(--text); }
+  .logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 22px; align-items: center; }
+  .nav-links a { color: var(--muted); font-size: .92rem; }
+  .nav-links a:hover { color: var(--text); text-decoration: none; }
+  .icon-btn {
+    background: var(--card); border: 1px solid var(--border); color: var(--text);
+    width: 36px; height: 36px; border-radius: 10px; cursor: pointer; font-size: 1rem;
+  }
+  @media (max-width: 720px) { .nav-links a.hide-sm { display: none; } .nav-links { gap: 14px; } }
+  @media (max-width: 420px) { .wrap { padding: 0 16px; } .stats { gap: 18px; } }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 80px 0 40px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: center; }
+  .hero > * { min-width: 0; }
+  @media (max-width: 860px) { .hero { grid-template-columns: 1fr; padding-top: 48px; } }
+  .status {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: .85rem; color: var(--ok);
+    border: 1px solid color-mix(in srgb, var(--ok) 40%, transparent);
+    background: color-mix(in srgb, var(--ok) 10%, transparent);
+    padding: 4px 12px; border-radius: 999px;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 0 var(--ok); animation: pulse 2s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 60%, transparent); } 70% { box-shadow: 0 0 0 10px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+  .hero h1 { font-size: clamp(2.4rem, 6vw, 3.6rem); line-height: 1.1; margin: 18px 0 10px; }
+  .hero h1 .grad { background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .typed { font-family: var(--mono); font-size: 1.15rem; color: var(--muted); min-height: 1.8em; }
+  .typed .cursor { display: inline-block; width: 9px; background: var(--accent); animation: blink 1s steps(1) infinite; margin-left: 2px; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .hero p.lead { color: var(--muted); max-width: 560px; }
+  .btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 22px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: .95rem;
+    border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer;
+  }
+  .btn:hover { text-decoration: none; border-color: var(--accent); }
+  .btn.primary { background: var(--accent); color: #04121a; border-color: var(--accent); }
+  .stats { display: flex; gap: 28px; margin-top: 30px; flex-wrap: wrap; }
+  .stat b { display: block; font-size: 1.5rem; font-family: var(--mono); color: var(--text); }
+  .stat span { font-size: .82rem; color: var(--muted); }
+
+  /* ---------- terminal ---------- */
+  .terminal {
+    background: var(--term-bg); border: 1px solid #1e293b; border-radius: 14px;
+    box-shadow: var(--shadow); overflow: hidden; font-family: var(--mono); font-size: .88rem; color: #cbd5e1;
+  }
+  .term-bar { display: flex; align-items: center; gap: 7px; padding: 10px 14px; background: #0d1424; border-bottom: 1px solid #1e293b; }
+  .term-bar i { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+  .term-bar .t { margin-left: 8px; color: #64748b; font-size: .78rem; }
+  .term-body { height: 330px; overflow-y: auto; padding: 14px 16px; cursor: text; }
+  .term-body .line { white-space: pre-wrap; word-break: break-word; }
+  .term-body .prompt { color: #34d399; }
+  .term-body .path { color: #60a5fa; }
+  .term-body .hl { color: #22d3ee; }
+  .term-body .dim { color: #64748b; }
+  .term-body .err { color: #f87171; }
+  .term-input { display: flex; gap: 8px; }
+  .term-input input {
+    flex: 1; background: transparent; border: 0; outline: 0; color: #e2e8f0;
+    font: inherit; caret-color: #22d3ee; padding: 0;
+  }
+  .chips-cmd { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 14px; border-top: 1px solid #1e293b; background: #0d1424; }
+  .chips-cmd button {
+    font-family: var(--mono); font-size: .75rem; color: #94a3b8; background: #111a2e;
+    border: 1px solid #1e293b; border-radius: 6px; padding: 3px 9px; cursor: pointer;
+  }
+  .chips-cmd button:hover { color: #22d3ee; border-color: #22d3ee; }
+
+  /* ---------- pipeline ---------- */
+  .pipeline { display: flex; align-items: center; gap: 0; overflow-x: auto; padding: 8px 2px 18px; }
+  .stage {
+    flex: 1 0 120px; min-width: 120px; text-align: center; cursor: pointer;
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 8px; transition: transform .2s, border-color .2s, box-shadow .2s; user-select: none;
+  }
+  .stage:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .stage .ico { font-size: 1.4rem; }
+  .stage .nm { font-weight: 600; font-size: .92rem; }
+  .stage .st { font-family: var(--mono); font-size: .72rem; color: var(--muted); }
+  .stage.running { border-color: var(--warn); box-shadow: 0 0 0 3px color-mix(in srgb, var(--warn) 20%, transparent); }
+  .stage.running .st { color: var(--warn); }
+  .stage.done { border-color: color-mix(in srgb, var(--ok) 60%, var(--border)); }
+  .stage.done .st { color: var(--ok); }
+  .stage.active { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
+  .arrow { flex: 0 0 26px; height: 2px; background: var(--border); position: relative; }
+  .arrow.lit { background: var(--ok); }
+  .stage-detail {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px 20px; min-height: 92px;
+  }
+  .stage-detail h3 { margin: 0 0 6px; font-size: 1.05rem; }
+  .stage-detail p { margin: 0 0 8px; color: var(--muted); }
+  .pipe-controls { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+  .pipe-controls .hint { color: var(--muted); font-size: .85rem; }
+
+  /* ---------- projects ---------- */
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+  .filter {
+    border: 1px solid var(--border); background: var(--card); color: var(--muted);
+    padding: 6px 14px; border-radius: 999px; cursor: pointer; font-size: .88rem;
+  }
+  .filter.on { color: var(--bg); background: var(--accent); border-color: var(--accent); font-weight: 600; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(310px, 100%), 1fr)); gap: 18px; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px;
+    display: flex; flex-direction: column; gap: 10px; transition: transform .2s, border-color .2s, opacity .25s;
+  }
+  .card:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--accent) 60%, var(--border)); }
+  .card.hidden { display: none; }
+  .card .top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+  .card h3 { margin: 0; font-size: 1.08rem; line-height: 1.35; }
+  .badge { font-size: .7rem; font-weight: 700; letter-spacing: .03em; padding: 3px 8px; border-radius: 6px; white-space: nowrap; background: color-mix(in srgb, var(--accent-2) 18%, transparent); color: var(--accent-2); }
+  .card p { margin: 0; color: var(--muted); font-size: .93rem; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { font-family: var(--mono); font-size: .72rem; padding: 2px 8px; border-radius: 6px; background: var(--bg-2); color: var(--text); border: 1px solid var(--border); }
+  .card details { font-size: .9rem; }
+  .card summary { cursor: pointer; color: var(--accent); font-weight: 600; list-style: none; }
+  .card summary::-webkit-details-marker { display: none; }
+  .card summary::before { content: "▸ "; }
+  .card details[open] summary::before { content: "▾ "; }
+  .card ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); }
+  .card ul li { margin-bottom: 4px; }
+  .card .links { margin-top: auto; padding-top: 6px; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .9rem; font-weight: 600; }
+  .card .links a { white-space: nowrap; }
+
+  /* ---------- skills ---------- */
+  .skills { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap: 16px; }
+  .skill-box { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+  .skill-box h3 { margin: 0 0 12px; font-size: .95rem; display: flex; gap: 8px; align-items: center; }
+  .pills { display: flex; flex-wrap: wrap; gap: 7px; }
+  .pill { font-size: .82rem; padding: 4px 10px; border-radius: 8px; background: var(--bg-2); border: 1px solid var(--border); cursor: default; transition: border-color .15s, color .15s; }
+  .pill:hover, .pill.glow { border-color: var(--accent); color: var(--accent); }
+  .skill-box.learning { border-style: dashed; }
+  .skill-box.learning .pill { color: var(--warn); }
+
+  /* ---------- certs / edu ---------- */
+  .certs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); gap: 12px; }
+  .cert { display: flex; gap: 12px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+  .cert .ic { font-size: 1.3rem; }
+  .cert b { display: block; font-size: .92rem; }
+  .cert span { font-size: .8rem; color: var(--muted); }
+  .edu { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px; display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+  .edu .ic { font-size: 2rem; }
+  .edu h3 { margin: 0; }
+  .edu p { margin: 2px 0 0; color: var(--muted); }
+
+  /* ---------- contact ---------- */
+  .contact { text-align: center; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, var(--card)), color-mix(in srgb, var(--accent-2) 12%, var(--card))); border: 1px solid var(--border); border-radius: 18px; padding: 40px 20px; }
+  .contact h2 { justify-content: center; }
+  .contact .btns { justify-content: center; }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: 10px; font-size: .9rem;
+    opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none; z-index: 50;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  footer { padding: 40px 0; color: var(--muted); font-size: .85rem; text-align: center; font-family: var(--mono); }
+
+  /* reveal on scroll */
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#top">mantasha<span>@cloud</span>:~$</a>
+    <div class="nav-links">
+      <a href="#pipeline" class="hide-sm">Pipeline</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills" class="hide-sm">Skills</a>
+      <a href="#certs" class="hide-sm">Certifications</a>
+      <a href="#contact">Contact</a>
+      <a href="Mantasha_Resume.pdf" download class="hide-sm">Resume</a>
+      <button class="icon-btn" id="themeBtn" aria-label="Toggle light/dark theme" title="Toggle theme">☾</button>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap" id="top">
+
+  <!-- ===== HERO ===== -->
+  <header class="hero">
+    <div class="reveal">
+      <span class="status"><span class="dot"></span> Open to DevOps &amp; Cloud internships</span>
+      <h1>Hi, I'm <span class="grad">Mantasha</span></h1>
+      <div class="typed" aria-live="polite"><span id="typed"></span><span class="cursor">&nbsp;</span></div>
+      <p class="lead">
+        BCA student in Cloud Computing &amp; Virtualisation who builds things that ship themselves:
+        CI/CD pipelines, Terraform infrastructure, security scanning and monitoring — on AWS.
+      </p>
+      <div class="btns">
+        <a class="btn primary" href="#projects">View projects →</a>
+        <a class="btn" href="Mantasha_Resume.pdf" download>⬇ Resume</a>
+        <a class="btn" href="https://github.com/MantashaR" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn" href="https://linkedin.com/in/mantasha-clouder" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><b data-count="7">0</b><span>projects on GitHub</span></div>
+        <div class="stat"><b data-count="7">0</b><span>certifications</span></div>
+        <div class="stat"><b data-count="3">0</b><span>clouds (AWS · Azure · GCP)</span></div>
+      </div>
+    </div>
+
+    <div class="terminal reveal" id="terminal" aria-label="Interactive terminal">
+      <div class="term-bar">
+        <i style="background:#f87171"></i><i style="background:#fbbf24"></i><i style="background:#34d399"></i>
+        <span class="t">mantasha@cloud: ~ — try typing <b>help</b></span>
+      </div>
+      <div class="term-body" id="termBody">
+        <div id="termOut"></div>
+        <div class="term-input">
+          <span><span class="prompt">mantasha@cloud</span>:<span class="path">~</span>$</span>
+          <input id="termIn" autocomplete="off" spellcheck="false" aria-label="Terminal command">
+        </div>
+      </div>
+      <div class="chips-cmd" id="cmdChips"></div>
+    </div>
+  </header>
+
+  <!-- ===== PIPELINE ===== -->
+  <section id="pipeline" class="reveal">
+    <h2><span class="hash">#</span> My DevOps pipeline</h2>
+    <p class="sub">Every stage of a delivery pipeline — and the project where I built it. Run it, or click any stage.</p>
+    <div class="pipe-controls">
+      <button class="btn primary" id="runPipe">▶ Run pipeline</button>
+      <span class="hint" id="pipeHint">Click a stage to see the project behind it.</span>
+    </div>
+    <div class="pipeline" id="pipe"></div>
+    <div class="stage-detail" id="stageDetail">
+      <h3>Pick a stage</h3>
+      <p>Each stage links to a real repository on GitHub.</p>
+    </div>
+  </section>
+
+  <!-- ===== PROJECTS ===== -->
+  <section id="projects">
+    <h2 class="reveal"><span class="hash">#</span> Projects</h2>
+    <p class="sub reveal">All code is public on GitHub. Filter by technology:</p>
+    <div class="filters reveal" id="filters"></div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- ===== SKILLS ===== -->
+  <section id="skills">
+    <h2 class="reveal"><span class="hash">#</span> Skills</h2>
+    <p class="sub reveal">Hover a skill to see which projects use it.</p>
+    <div class="skills reveal" id="skillGrid"></div>
+  </section>
+
+  <!-- ===== CERTS + EDU ===== -->
+  <section id="certs">
+    <h2 class="reveal"><span class="hash">#</span> Certifications</h2>
+    <p class="sub reveal">Cloud, Linux, networking and security fundamentals.</p>
+    <div class="certs reveal" id="certGrid"></div>
+
+    <h2 class="reveal" style="margin-top:48px"><span class="hash">#</span> Education</h2>
+    <div class="edu reveal" style="margin-top:18px">
+      <div class="ic">🎓</div>
+      <div>
+        <h3>Bachelor of Computer Applications — Cloud Computing &amp; Virtualisation</h3>
+        <p>Galgotias University, Greater Noida · 2024 – Present</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact">
+    <div class="contact reveal">
+      <h2><span class="hash">#</span> Let's build something</h2>
+      <p class="sub" style="margin-bottom:0">Looking for a DevOps or Cloud internship. I reply fast.</p>
+      <div class="btns">
+        <button class="btn primary" id="copyEmail">✉ Copy email</button>
+        <a class="btn" href="mailto:mantashafroze@gmail.com">Send email</a>
+        <a class="btn" href="Mantasha_Resume.pdf" download>⬇ Resume (PDF)</a>
+        <a class="btn" href="https://linkedin.com/in/mantasha-clouder" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn" href="https://github.com/MantashaR" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div>© <span id="year"></span> Mantasha · built with plain HTML, CSS &amp; JS</div>
+  <div style="margin-top:6px">☁ Hosted on Amazon S3 static website hosting</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ======================= DATA ======================= */
+const GH = "https://github.com/MantashaR/";
+const EMAIL = "mantashafroze@gmail.com";
+
+const PROJECTS = [
+  {
+    id: "finops",
+    title: "Multi-Cloud Cost Optimisation",
+    badge: "HCLTech Project",
+    repo: "multi-cloud-cost-optimisation",
+    summary: "One dashboard for AWS, Azure and GCP spend — detects cost anomalies, forecasts spend and generates Terraform fixes for wasted resources.",
+    tags: ["Python", "Django", "Celery", "Terraform", "Docker", "Prometheus", "Grafana", "ML"],
+    cats: ["AWS", "Terraform", "Monitoring", "Python", "ML"],
+    how: [
+      "Connectors for AWS Cost Explorer, Azure Cost Management and GCP Billing (BigQuery).",
+      "Isolation Forest flags abnormal spend; Prophet forecasts the next 14 days.",
+      "Right-sizing engine writes ready-to-review Terraform with projected savings.",
+      "Prometheus + Grafana dashboards and alert rules for API health and FinOps metrics.",
+      "Runs as 8 Docker Compose services: API, workers, scheduler, Postgres, Redis, UI, monitoring."
+    ]
+  },
+  {
+    id: "devsecops",
+    title: "AI-Augmented DevSecOps Pipeline",
+    badge: "Security",
+    repo: "AI-DevSecOps-Pipelines",
+    summary: "A GitHub Action that scans every pull request, asks an LLM to triage and fix findings, then re-scans to prove the fix works.",
+    tags: ["GitHub Actions", "Semgrep", "Trivy", "SARIF", "LLM", "Python"],
+    cats: ["CI/CD", "Security", "Python"],
+    how: [
+      "Semgrep (SAST) and Trivy (SCA) run on every PR; results parsed from SARIF.",
+      "An LLM rates severity and writes a code-level patch.",
+      "A fix PR is opened automatically, then re-scanned to confirm the finding is gone.",
+      "Cache avoids repeat LLM calls; an MTTR dashboard tracks time-to-fix."
+    ]
+  },
+  {
+    id: "janitor",
+    title: "Cloud Cost Hygiene Automation",
+    badge: "Terraform",
+    repo: "code-conscience-devops",
+    summary: "Terraform-provisioned AWS environment plus a \"Cost Janitor\" CLI that finds orphaned, money-wasting resources on every pull request.",
+    tags: ["Terraform", "LocalStack", "Python", "boto3", "GitHub Actions", "pytest"],
+    cats: ["AWS", "Terraform", "CI/CD", "Python"],
+    how: [
+      "Reusable VPC module, subnet, security group, EC2 and versioned S3 — on LocalStack.",
+      "Janitor flags unattached EBS volumes, stopped EC2, idle Elastic IPs and untagged resources.",
+      "Safe --dry-run / --delete modes; Protected=true tag is never touched.",
+      "GitHub Actions runs it on every PR, backed by 14 pytest unit tests."
+    ]
+  },
+  {
+    id: "static",
+    title: "AWS Static Website Hosting",
+    badge: "AWS",
+    repo: "aws-static-website-hosting",
+    summary: "The site you're looking at — hosted on Amazon S3. Also deployed on an Ubuntu EC2 instance behind Nginx.",
+    tags: ["S3", "EC2", "Nginx", "IAM", "Bash", "Linux"],
+    cats: ["AWS"],
+    how: [
+      "S3 static website hosting with a bucket policy allowing public read of the site only.",
+      "Least-privilege IAM policy for the deploy user, scoped to one bucket.",
+      "EC2 version: security groups for SSH/HTTP, Nginx, and a Bash script to validate and restart it."
+    ]
+  },
+  {
+    id: "cicd",
+    title: "CI/CD Pipeline Demo",
+    badge: "CI/CD",
+    repo: "cicd-pipeline-demo",
+    summary: "A Flask app shipped by two pipelines — Jenkins and GitHub Actions — from commit to a live deployment.",
+    tags: ["Jenkins", "GitHub Actions", "Docker", "Docker Hub", "Flask", "Render"],
+    cats: ["CI/CD"],
+    how: [
+      "Jenkinsfile stages: Checkout → Lint & Test → Build & Push Image → Deploy.",
+      "Docker image pushed to Docker Hub; auto-deploys to Render.",
+      "Health-check endpoint used by Docker and uptime monitors."
+    ]
+  },
+  {
+    id: "movies",
+    title: "Movie Recommendation System",
+    badge: "Machine Learning",
+    repo: "movie-recommender",
+    summary: "Content-based movie recommender over 4,803 films — pick a movie, get on-theme picks from the same cluster, ranked by similarity.",
+    tags: ["Python", "scikit-learn", "TF-IDF", "K-Means", "Streamlit", "Pandas"],
+    cats: ["Python", "ML"],
+    how: [
+      "Builds a feature 'soup' per movie: genres, keywords, top cast, director and plot (TMDB 5000 dataset).",
+      "TF-IDF + Truncated SVD, combined with scaled rating, votes, popularity, runtime and year.",
+      "K-Means groups movies into themed clusters (elbow + silhouette analysis in the notebook).",
+      "Recommends by cosine similarity within the chosen movie's cluster; Streamlit app for the demo."
+    ]
+  },
+  {
+    id: "vault",
+    title: "Advanced Password Manager",
+    badge: "Security",
+    repo: "Advanced-Password-Manager",
+    summary: "Offline, encrypted password manager for the terminal — everything lives in one AES-encrypted vault file.",
+    tags: ["Python", "AES", "Cryptography", "pytest"],
+    cats: ["Security", "Python"],
+    how: [
+      "Master-password authentication; vault never leaves the machine.",
+      "AES encryption for stored credentials; strong-password generator.",
+      "pytest unit tests for the core logic."
+    ]
+  }
+];
+
+const STAGES = [
+  { ico: "⌨", nm: "Code",    project: "cicd",      text: "Every project lives in Git with pull-request workflows on GitHub." },
+  { ico: "⚙", nm: "Build",   project: "cicd",      text: "Docker images built and pushed by Jenkins and GitHub Actions." },
+  { ico: "✓", nm: "Test",    project: "janitor",   text: "pytest suites run in CI on every pull request." },
+  { ico: "🛡", nm: "Scan",    project: "devsecops", text: "Semgrep + Trivy security scans, triaged and auto-fixed with an LLM." },
+  { ico: "☁", nm: "Provision", project: "janitor", text: "AWS infrastructure defined as code with reusable Terraform modules." },
+  { ico: "🚀", nm: "Deploy",  project: "static",    text: "Static sites on S3 and EC2 + Nginx; containers deployed to Render." },
+  { ico: "📈", nm: "Monitor", project: "finops",    text: "Prometheus metrics, Grafana dashboards and alert rules." }
+];
+
+const SKILLS = [
+  { ico: "☁", h: "Cloud (AWS)", items: ["EC2", "S3", "IAM", "VPC", "ECR", "Lambda", "CloudWatch", "RDS", "Route 53"] },
+  { ico: "🐳", h: "Containers", items: ["Docker", "Docker Compose", "Docker Hub"] },
+  { ico: "🔁", h: "CI/CD", items: ["Jenkins", "GitHub Actions", "Pipeline design"] },
+  { ico: "🏗", h: "Infrastructure as Code", items: ["Terraform", "CloudFormation", "LocalStack"] },
+  { ico: "📈", h: "Monitoring", items: ["Prometheus", "Grafana", "Alerting rules"] },
+  { ico: "🛡", h: "Security", items: ["Semgrep", "Trivy", "IAM least privilege", "AES encryption"] },
+  { ico: "🐧", h: "Linux & Scripting", items: ["Linux", "Bash", "Python", "Nginx"] },
+  { ico: "🗄", h: "Data", items: ["PostgreSQL", "MySQL", "Redis"] },
+  { ico: "🧠", h: "Machine Learning", items: ["scikit-learn", "Pandas", "Isolation Forest", "Prophet", "K-Means"] },
+  { ico: "🌱", h: "Currently learning", items: ["Kubernetes", "ArgoCD / GitOps", "EKS", "Loki"], learning: true }
+];
+
+// skill -> project ids (for hover highlighting)
+const SKILL_MAP = {
+  "EC2": ["static", "janitor"], "S3": ["static", "janitor"], "IAM": ["static"], "VPC": ["janitor"],
+  "Docker": ["finops", "cicd"], "Docker Compose": ["finops"], "Docker Hub": ["cicd"],
+  "Jenkins": ["cicd"], "GitHub Actions": ["devsecops", "janitor", "cicd"], "Pipeline design": ["cicd", "devsecops"],
+  "Terraform": ["janitor", "finops"], "LocalStack": ["janitor"],
+  "Prometheus": ["finops"], "Grafana": ["finops"], "Alerting rules": ["finops"],
+  "Semgrep": ["devsecops"], "Trivy": ["devsecops"], "IAM least privilege": ["static"], "AES encryption": ["vault"],
+  "Bash": ["static"], "Python": ["finops", "devsecops", "janitor", "vault"], "Nginx": ["static"], "Linux": ["static"],
+  "PostgreSQL": ["finops"], "Redis": ["finops"],
+  "scikit-learn": ["movies", "finops"], "Pandas": ["movies", "finops"], "Isolation Forest": ["finops"], "Prophet": ["finops"], "K-Means": ["movies"]
+};
+
+const CERTS = [
+  { ic: "☁", b: "AWS Academy Graduate — Cloud Foundations", s: "Amazon Web Services · Credly verified" },
+  { ic: "☁", b: "AWS Academy Graduate — Cloud Developing", s: "Amazon Web Services · Credly verified" },
+  { ic: "☁", b: "AWS Cloud Practitioner Essentials", s: "Udemy" },
+  { ic: "🐧", b: "Linux Essentials", s: "Cisco Networking Academy" },
+  { ic: "🗄", b: "MySQL Database", s: "Oracle" },
+  { ic: "🌐", b: "Networking with Cisco Packet Tracer", s: "Cisco Networking Academy" },
+  { ic: "🛡", b: "Cyber Threat Management", s: "Cisco Networking Academy" }
+];
+
+/* ======================= HELPERS ======================= */
+const $ = (s) => document.querySelector(s);
+const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function toast(msg) {
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove("show"), 1800);
+}
+
+async function copyEmail() {
+  try { await navigator.clipboard.writeText(EMAIL); toast("Email copied: " + EMAIL); }
+  catch { toast(EMAIL); }
+}
+
+/* ======================= THEME ======================= */
+(function theme() {
+  const root = document.documentElement;
+  let saved = null;
+  try { saved = localStorage.getItem("theme"); } catch {}
+  const initial = saved || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+  const apply = (t) => { root.dataset.theme = t; $("#themeBtn").textContent = t === "light" ? "☾" : "☀"; };
+  apply(initial);
+  $("#themeBtn").addEventListener("click", () => {
+    const next = root.dataset.theme === "light" ? "dark" : "light";
+    apply(next);
+    try { localStorage.setItem("theme", next); } catch {}
+  });
+})();
+
+/* ======================= TYPED ROLE ======================= */
+(function typed() {
+  const roles = ["DevOps & Cloud Engineer", "AWS · Terraform · Docker", "CI/CD pipeline builder", "Monitoring with Prometheus + Grafana", "DevSecOps enthusiast"];
+  const el = $("#typed");
+  if (reduced) { el.textContent = roles[0]; return; }
+  let r = 0, i = 0, del = false;
+  (function tick() {
+    const word = roles[r];
+    el.textContent = word.slice(0, i);
+    if (!del && i < word.length) { i++; setTimeout(tick, 60); }
+    else if (!del) { del = true; setTimeout(tick, 1600); }
+    else if (i > 0) { i--; setTimeout(tick, 30); }
+    else { del = false; r = (r + 1) % roles.length; setTimeout(tick, 300); }
+  })();
+})();
+
+/* ======================= TERMINAL ======================= */
+(function terminal() {
+  const out = $("#termOut"), input = $("#termIn"), body = $("#termBody");
+  const history = []; let hIdx = 0;
+
+  const print = (html, cls = "") => {
+    const d = document.createElement("div");
+    d.className = "line " + cls;
+    d.innerHTML = html;
+    out.appendChild(d);
+    body.scrollTop = body.scrollHeight;
+  };
+  const echo = (cmd) => print(`<span class="prompt">mantasha@cloud</span>:<span class="path">~</span>$ ${esc(cmd)}`);
+
+  const COMMANDS = {
+    help: () => [
+      "Available commands:",
+      "  <span class='hl'>whoami</span>       about me",
+      "  <span class='hl'>skills</span>       tech I use",
+      "  <span class='hl'>projects</span>     what I've built",
+      "  <span class='hl'>open</span> &lt;n&gt;     open project n on GitHub",
+      "  <span class='hl'>certs</span>        certifications",
+      "  <span class='hl'>education</span>    where I study",
+      "  <span class='hl'>contact</span>      get in touch",
+      "  <span class='hl'>resume</span>       open my resume (PDF)",
+      "  <span class='hl'>clear</span>        clear the screen",
+      "<span class='dim'>Tip: ↑/↓ for history, Tab to autocomplete.</span>"
+    ].join("\n"),
+    whoami: () => "Mantasha — aspiring DevOps & Cloud Engineer.\nBCA (Cloud Computing & Virtualisation) @ Galgotias University.\nI automate builds, infrastructure, security scans and monitoring on AWS.",
+    skills: () => SKILLS.filter(s => !s.learning).map(s => `<span class='hl'>${esc(s.h.padEnd(24))}</span>${esc(s.items.join(", "))}`).join("\n")
+      + `\n<span class='dim'>learning: ${esc(SKILLS.find(s => s.learning).items.join(", "))}</span>`,
+    projects: () => PROJECTS.map((p, i) => `<span class='hl'>[${i + 1}]</span> ${esc(p.title)} <span class='dim'>— ${esc(p.tags.slice(0, 4).join(", "))}</span>`).join("\n")
+      + "\n<span class='dim'>type: open 1</span>",
+    certs: () => CERTS.map(c => `✔ ${esc(c.b)} <span class='dim'>(${esc(c.s)})</span>`).join("\n"),
+    education: () => "🎓 BCA — Cloud Computing & Virtualisation\n   Galgotias University, Greater Noida · 2024 – Present",
+    contact: () => {
+      copyEmail();
+      return `email     <a href="mailto:${EMAIL}">${EMAIL}</a>  <span class='dim'>(copied!)</span>\nlinkedin  <a href="https://linkedin.com/in/mantasha-clouder" target="_blank" rel="noopener">linkedin.com/in/mantasha-clouder</a>\ngithub    <a href="https://github.com/MantashaR" target="_blank" rel="noopener">github.com/MantashaR</a>`;
+    },
+    resume: () => { window.open("Mantasha_Resume.pdf", "_blank", "noopener"); return "opening <a href='Mantasha_Resume.pdf' target='_blank' rel='noopener'>Mantasha_Resume.pdf</a> …"; },
+    ls: () => "about.txt  projects/  skills.yml  certs/  contact.sh  Mantasha_Resume.pdf",
+    "cat about.txt": () => COMMANDS.whoami(),
+    date: () => new Date().toString(),
+    pwd: () => "/home/mantasha",
+    "sudo hire-mantasha": () => "<span style='color:#34d399'>[sudo] permission granted ✔</span>\nGreat choice. Run <span class='hl'>contact</span> to reach me.",
+    "kubectl get pods": () => "<span class='dim'>No resources found — Kubernetes is on my learning list 🌱</span>",
+    clear: () => { out.innerHTML = ""; return null; }
+  };
+  const NAMES = ["help", "whoami", "skills", "projects", "open", "certs", "education", "contact", "resume", "clear", "ls", "date", "pwd"];
+
+  function run(raw) {
+    const cmd = raw.trim();
+    echo(cmd);
+    if (!cmd) return;
+    history.push(cmd); hIdx = history.length;
+    const lc = cmd.toLowerCase();
+    const m = lc.match(/^open\s+(\d+)$/);
+    if (m) {
+      const p = PROJECTS[+m[1] - 1];
+      if (!p) return print(`no project ${esc(m[1])} — try <span class='hl'>projects</span>`, "err");
+      window.open(GH + p.repo, "_blank", "noopener");
+      return print(`opening <a href="${GH + p.repo}" target="_blank" rel="noopener">github.com/MantashaR/${esc(p.repo)}</a> …`);
+    }
+    const fn = COMMANDS[lc];
+    if (!fn) return print(`command not found: ${esc(cmd)} — type <span class='hl'>help</span>`, "err");
+    const res = fn();
+    if (res) print(res);
+  }
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { run(input.value); input.value = ""; }
+    else if (e.key === "ArrowUp") { if (hIdx > 0) input.value = history[--hIdx]; e.preventDefault(); }
+    else if (e.key === "ArrowDown") { input.value = hIdx < history.length - 1 ? history[++hIdx] : (hIdx = history.length, ""); e.preventDefault(); }
+    else if (e.key === "Tab") {
+      e.preventDefault();
+      const hit = NAMES.filter(n => n.startsWith(input.value.toLowerCase()));
+      if (hit.length === 1) input.value = hit[0];
+      else if (hit.length > 1) { echo(input.value); print(hit.join("  "), "dim"); }
+    }
+  });
+  body.addEventListener("click", () => { if (!window.getSelection().toString()) input.focus({ preventScroll: true }); });
+
+  ["whoami", "projects", "skills", "resume", "contact", "sudo hire-mantasha"].forEach((c) => {
+    const b = document.createElement("button");
+    b.textContent = c;
+    b.addEventListener("click", () => { run(c); input.focus({ preventScroll: true }); });
+    $("#cmdChips").appendChild(b);
+  });
+
+  print("<span class='dim'>Last login: today on ttys001 — welcome!</span>");
+  print("Type <span class='hl'>help</span> to see what I can do, or click a command below.");
+})();
+
+/* ======================= PIPELINE ======================= */
+(function pipeline() {
+  const pipe = $("#pipe"), detail = $("#stageDetail");
+  STAGES.forEach((s, i) => {
+    if (i) { const a = document.createElement("div"); a.className = "arrow"; pipe.appendChild(a); }
+    const el = document.createElement("div");
+    el.className = "stage";
+    el.tabIndex = 0;
+    el.setAttribute("role", "button");
+    el.innerHTML = `<div class="ico">${s.ico}</div><div class="nm">${s.nm}</div><div class="st">idle</div>`;
+    el.addEventListener("click", () => show(i));
+    el.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); show(i); } });
+    pipe.appendChild(el);
+  });
+  const stages = [...pipe.querySelectorAll(".stage")];
+  const arrows = [...pipe.querySelectorAll(".arrow")];
+
+  function show(i) {
+    stages.forEach((el, j) => el.classList.toggle("active", j === i));
+    const s = STAGES[i], p = PROJECTS.find(x => x.id === s.project);
+    detail.innerHTML = `<h3>${s.ico} ${s.nm}</h3><p>${esc(s.text)}</p>
+      <a href="#${p.id}" data-jump="${p.id}">See project: ${esc(p.title)} ↓</a> ·
+      <a href="${GH + p.repo}" target="_blank" rel="noopener">GitHub ↗</a>`;
+    detail.querySelector("[data-jump]").addEventListener("click", (e) => { e.preventDefault(); focusProject(p.id); });
+  }
+
+  let running = false;
+  $("#runPipe").addEventListener("click", async () => {
+    if (running) return;
+    running = true;
+    $("#runPipe").textContent = "⏳ Running…";
+    stages.forEach(s => { s.classList.remove("done", "running", "active"); s.querySelector(".st").textContent = "queued"; });
+    arrows.forEach(a => a.classList.remove("lit"));
+    for (let i = 0; i < stages.length; i++) {
+      const st = stages[i];
+      st.classList.add("running"); st.querySelector(".st").textContent = "running…";
+      show(i);
+      await new Promise(r => setTimeout(r, reduced ? 50 : 750));
+      st.classList.remove("running"); st.classList.add("done"); st.querySelector(".st").textContent = "✔ passed";
+      if (arrows[i]) arrows[i].classList.add("lit");
+    }
+    $("#pipeHint").textContent = "✔ Pipeline passed — all 7 stages green.";
+    $("#runPipe").textContent = "↻ Run again";
+    running = false;
+  });
+})();
+
+/* ======================= PROJECTS ======================= */
+let activeFilter = "All";
+function renderProjects() {
+  const grid = $("#grid");
+  grid.innerHTML = PROJECTS.map(p => `
+    <article class="card reveal" id="${p.id}" data-cats="${p.cats.join(",")}">
+      <div class="top"><h3>${esc(p.title)}</h3><span class="badge">${esc(p.badge)}</span></div>
+      <p>${esc(p.summary)}</p>
+      <div class="tags">${p.tags.map(t => `<span class="tag">${esc(t)}</span>`).join("")}</div>
+      <details><summary>How it works</summary><ul>${p.how.map(h => `<li>${esc(h)}</li>`).join("")}</ul></details>
+      <div class="links"><a href="${GH + p.repo}" target="_blank" rel="noopener">View code on GitHub ↗</a></div>
+    </article>`).join("");
+
+  const cats = ["All", "AWS", "Terraform", "CI/CD", "Security", "Monitoring", "Python", "ML"];
+  $("#filters").innerHTML = cats.map(c => `<button class="filter${c === activeFilter ? " on" : ""}" data-c="${c}">${c}</button>`).join("");
+  $("#filters").querySelectorAll(".filter").forEach(b => b.addEventListener("click", () => {
+    activeFilter = b.dataset.c;
+    $("#filters").querySelectorAll(".filter").forEach(x => x.classList.toggle("on", x === b));
+    grid.querySelectorAll(".card").forEach(card => {
+      const show = activeFilter === "All" || card.dataset.cats.split(",").includes(activeFilter);
+      card.classList.toggle("hidden", !show);
+    });
+  }));
+}
+function focusProject(id) {
+  activeFilter = "All";
+  $("#filters").querySelectorAll(".filter").forEach(x => x.classList.toggle("on", x.dataset.c === "All"));
+  document.querySelectorAll(".card").forEach(c => c.classList.remove("hidden"));
+  const card = document.getElementById(id);
+  card.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
+  card.style.borderColor = "var(--accent)";
+  setTimeout(() => (card.style.borderColor = ""), 1600);
+}
+renderProjects();
+
+/* ======================= SKILLS ======================= */
+(function skills() {
+  $("#skillGrid").innerHTML = SKILLS.map(s => `
+    <div class="skill-box${s.learning ? " learning" : ""}">
+      <h3>${s.ico} ${esc(s.h)}</h3>
+      <div class="pills">${s.items.map(i => `<span class="pill" data-skill="${esc(i)}">${esc(i)}</span>`).join("")}</div>
+    </div>`).join("");
+  $("#skillGrid").querySelectorAll(".pill").forEach(pill => {
+    const ids = SKILL_MAP[pill.dataset.skill];
+    if (!ids) return;
+    pill.title = "Used in: " + ids.map(id => PROJECTS.find(p => p.id === id).title).join(", ");
+    pill.style.cursor = "pointer";
+    pill.addEventListener("click", () => focusProject(ids[0]));
+  });
+})();
+
+/* ======================= CERTS ======================= */
+$("#certGrid").innerHTML = CERTS.map(c => `<div class="cert"><div class="ic">${c.ic}</div><div><b>${esc(c.b)}</b><span>${esc(c.s)}</span></div></div>`).join("");
+
+/* ======================= MISC ======================= */
+$("#copyEmail").addEventListener("click", copyEmail);
+$("#year").textContent = new Date().getFullYear();
+
+// count-up stats
+document.querySelectorAll("[data-count]").forEach(el => {
+  const target = +el.dataset.count;
+  if (reduced) { el.textContent = target; return; }
+  let n = 0;
+  const step = () => { el.textContent = ++n; if (n < target) setTimeout(step, 120); };
+  setTimeout(step, 400);
+});
+
+// reveal on scroll
+const io = "IntersectionObserver" in window
+  ? new IntersectionObserver((entries) => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: 0.12 })
+  : null;
+document.querySelectorAll(".reveal").forEach(el => io ? io.observe(el) : el.classList.add("in"));
+</script>
+</body>
+</html>
