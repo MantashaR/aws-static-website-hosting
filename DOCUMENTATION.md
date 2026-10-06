@@ -2,7 +2,7 @@
 
 **Name:** Mantasha
 **College:** Galgotias University
-**Branch:** CSE
+**Course:** BCA (Cloud Computing & Virtualisation)
 **Email:** mantashafroze@gmail.com
 **Date:** 11 July 2026
 **GitHub Repo:** https://github.com/MantashaR/aws-devops-assignment
