@@ -1,6 +1,7 @@
 # AWS Static Website Hosting — EC2 + Nginx and Amazon S3
 
-**Live portfolio (Amazon S3):** http://mantasha-portfolio-2026.s3-website.ap-south-1.amazonaws.com
+**Live portfolio:** https://d3bslefzqkag99.cloudfront.net (CloudFront + Amazon S3)
+· S3 origin: http://mantasha-portfolio-2026.s3-website.ap-south-1.amazonaws.com
 
 Two ways to host a static website on AWS, side by side:
 
@@ -180,10 +181,25 @@ Asks you to type the bucket name, then deletes all files and the bucket.
 | `403 Forbidden` in the browser | The bucket policy isn't applied — re-run `setup.sh`. |
 | `404` for the homepage | Nothing deployed yet — run `deploy.sh`. |
 
-### Next step: HTTPS
+### HTTPS with CloudFront
 
-S3 website endpoints are HTTP only. Putting **CloudFront** in front (with an ACM
-certificate) adds HTTPS, caching at edge locations and a custom domain.
+S3 website endpoints are HTTP only, and phones/browsers that try `https://` first
+fail to open them. A **CloudFront** distribution sits in front of the bucket:
+
+```
+Browser ──HTTPS──> CloudFront (edge cache, *.cloudfront.net certificate)
+                        └──HTTP──> S3 website endpoint
+```
+
+- Config: [`s3/cloudfront.json`](s3/cloudfront.json) — origin is the S3 website
+  endpoint, viewers are redirected from HTTP to HTTPS, managed `CachingOptimized` policy.
+- Create it once:
+  `aws cloudfront create-distribution --distribution-config file://s3/cloudfront.json`
+- HTML is uploaded with `no-cache`, so page edits show up right after `deploy.sh`.
+  Other files (e.g. the resume PDF) can be cached for up to a day; to refresh at once:
+  `aws cloudfront create-invalidation --distribution-id <ID> --paths "/*"`
+
+Next step: a custom domain (Route 53 or any registrar + an ACM certificate in us-east-1).
 
 ---
 
@@ -199,4 +215,5 @@ certificate) adds HTTPS, caching at edge locations and a custom domain.
 | `s3/teardown.sh` | Method 2 — delete the bucket |
 | `s3/bucket-policy.json` | Public read of website files only |
 | `s3/iam-deploy-policy.json` | Least-privilege policy for the deploy user |
+| `s3/cloudfront.json` | CloudFront distribution config (HTTPS in front of the bucket) |
 | `DOCUMENTATION.md` | Full report for the original EC2 assignment |
