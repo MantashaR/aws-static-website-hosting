@@ -1,5 +1,7 @@
 # AWS Static Website Hosting — EC2 + Nginx and Amazon S3
 
+**Live portfolio (Amazon S3):** http://mantasha-portfolio-2026.s3-website.ap-south-1.amazonaws.com
+
 Two ways to host a static website on AWS, side by side:
 
 | | Method 1: EC2 + Nginx | Method 2: Amazon S3 |
