@@ -1,7 +1,16 @@
 # AWS Static Website Hosting — EC2 + Nginx and Amazon S3
 
+[![Live](https://img.shields.io/badge/live-online-brightgreen)](https://d3bslefzqkag99.cloudfront.net)
+![Amazon S3](https://img.shields.io/badge/Amazon_S3-static_hosting-569A31?logo=amazons3&logoColor=white)
+![CloudFront](https://img.shields.io/badge/CloudFront-HTTPS-8C4FFF?logo=amazonaws&logoColor=white)
+![EC2](https://img.shields.io/badge/EC2-Ubuntu_24.04-FF9900?logo=amazonec2&logoColor=white)
+![Nginx](https://img.shields.io/badge/Nginx-web_server-009639?logo=nginx&logoColor=white)
+![Bash](https://img.shields.io/badge/Bash-AWS_CLI_scripts-4EAA25?logo=gnubash&logoColor=white)
+
 **Live portfolio:** https://d3bslefzqkag99.cloudfront.net (CloudFront + Amazon S3)
 · S3 origin: http://mantasha-portfolio-2026.s3-website.ap-south-1.amazonaws.com
+
+[![Portfolio screenshot](docs/images/portfolio.png)](https://d3bslefzqkag99.cloudfront.net)
 
 Two ways to host a static website on AWS, side by side:
 
@@ -86,25 +95,30 @@ chmod +x restart-nginx.sh
 
 ---
 
----
-
-## Method 2 — Portfolio on Amazon S3 static website hosting
+## Method 2 — Portfolio on Amazon S3 + CloudFront
 
 ```
-Browser ──HTTP──> S3 website endpoint ──> bucket: index.html, error.html, Mantasha_Resume.pdf
-                         ▲
-Laptop ── deploy.sh (aws s3 sync) ──┘     IAM user limited to this one bucket
+Browser ──HTTPS──> CloudFront (edge cache, HTTP→HTTPS redirect)
+                        │
+                        └──HTTP──> S3 website endpoint ──> bucket: index.html, error.html, Mantasha_Resume.pdf
+                                          ▲
+Laptop ── deploy.sh (aws s3 sync) ────────┘
 ```
 
-**AWS services used:** S3 (static website hosting, bucket policy, Block Public Access), IAM.
+**AWS services used:** S3 (static website hosting, bucket policy, Block Public Access),
+CloudFront (HTTPS, edge caching), IAM, AWS Budgets (zero-spend alert).
 
 ### Security design
 
 - **Bucket policy** ([`s3/bucket-policy.json`](s3/bucket-policy.json)) allows the public to
   *read* objects (`s3:GetObject`) and nothing else — no listing, no uploads.
 - **Block Public Access** stays on for ACLs; only the bucket policy may grant public read.
-- **Least-privilege deploy user** ([`s3/iam-deploy-policy.json`](s3/iam-deploy-policy.json)) can
-  list, upload and delete files in **this one bucket only** — it can't touch any other AWS resource.
+- **HTTPS only for visitors** — CloudFront redirects `http://` to `https://`.
+- **No root keys** — the CLI uses a dedicated IAM user, and keys live only in `~/.aws/credentials`.
+- **Least-privilege policy for deploys** ([`s3/iam-deploy-policy.json`](s3/iam-deploy-policy.json)):
+  list, upload and delete files in **this one bucket** and refresh **this one CloudFront
+  distribution** — nothing else. The one-time setup (creating the bucket and distribution)
+  needs broader rights; step 4 below swaps those for this policy.
 
 ### 0. Install the AWS CLI (one time)
 
@@ -119,8 +133,8 @@ Run the scripts below from **Git Bash** (installed with Git for Windows).
 
 ### 1. Credentials
 
-1. AWS Console → **IAM** → **Users** → **Create user** (e.g. `portfolio-admin`) with
-   `AmazonS3FullAccess` for the one-time setup.
+1. AWS Console → **IAM** → **Users** → **Create user** (`portfolio-deployer`) with
+   `AmazonS3FullAccess` and `CloudFrontFullAccess` for the one-time setup.
 2. Open the user → **Security credentials** → **Create access key** → *Command Line Interface*.
 3. On the laptop:
    ```bash
@@ -156,13 +170,16 @@ http://mantasha-portfolio-2026.s3-website.ap-south-1.amazonaws.com
 
 Edit anything in `portfolio/` and run `./deploy.sh` again to update the live site.
 
-### 4. (Recommended) Switch to the least-privilege deploy user
+### 4. (Recommended) Lock the deploy user down to least privilege
+
+Once the bucket and CloudFront distribution exist, day-to-day deploys need far less access.
 
 1. IAM → **Policies** → **Create policy** → JSON → paste
-   [`s3/iam-deploy-policy.json`](s3/iam-deploy-policy.json), replacing `BUCKET_NAME` with your bucket.
-2. Create a user `portfolio-deployer`, attach only that policy, create an access key.
-3. `aws configure --profile deployer`, then deploy with
-   `AWS_PROFILE=deployer ./deploy.sh mantasha-portfolio-2026`.
+   [`s3/iam-deploy-policy.json`](s3/iam-deploy-policy.json), replacing `BUCKET_NAME`,
+   `ACCOUNT_ID` and `DISTRIBUTION_ID` with your values.
+2. Attach it to `portfolio-deployer`, then detach `AmazonS3FullAccess` and `CloudFrontFullAccess`.
+3. `./deploy.sh mantasha-portfolio-2026` keeps working — but the key can no longer touch
+   any other bucket or AWS service.
 
 ### 5. Tear down
 
@@ -203,6 +220,22 @@ Next step: a custom domain (Route 53 or any registrar + an ACM certificate in us
 
 ---
 
+## What I learned
+
+- **Server vs serverless hosting** — on EC2 I manage the OS, Nginx and firewall myself;
+  on S3 + CloudFront AWS runs the servers and I only ship files.
+- **Automation over clicking** — `setup.sh` / `deploy.sh` turn a 15-click console process
+  into two repeatable commands, built on the AWS CLI.
+- **Access control in layers** — bucket policies vs ACLs, Block Public Access, security
+  groups, and why a deploy key should only reach one bucket (least privilege).
+- **HTTPS and CDNs** — S3 website endpoints are HTTP only; CloudFront adds TLS, redirects
+  HTTP to HTTPS and caches the site at edge locations. Caching also means thinking about
+  `Cache-Control` headers and invalidations.
+- **Cost awareness** — a stopped EC2 instance still bills for its disk, a static site on
+  S3 costs almost nothing, and a zero-spend budget alert catches surprises early.
+
+---
+
 ## Files in this repo
 
 | File | Purpose |
@@ -214,6 +247,7 @@ Next step: a custom domain (Route 53 or any registrar + an ACM certificate in us
 | `s3/deploy.sh` | Method 2 — upload the portfolio (`aws s3 sync`) |
 | `s3/teardown.sh` | Method 2 — delete the bucket |
 | `s3/bucket-policy.json` | Public read of website files only |
-| `s3/iam-deploy-policy.json` | Least-privilege policy for the deploy user |
+| `s3/iam-deploy-policy.json` | Least-privilege policy for day-to-day deploys (one bucket + one distribution) |
 | `s3/cloudfront.json` | CloudFront distribution config (HTTPS in front of the bucket) |
+| `docs/images/portfolio.png` | Screenshot of the live portfolio |
 | `DOCUMENTATION.md` | Full report for the original EC2 assignment |
